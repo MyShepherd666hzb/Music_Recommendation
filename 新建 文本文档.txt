@@ -1,0 +1,70 @@
+#include <SFML/Graphics.hpp>
+
+#define MAX_ITEMS 100
+#define MAX_CAPACITY 1000
+
+int dp[MAX_ITEMS + 1][MAX_CAPACITY + 1];
+
+struct Item {
+    int weight;
+    int value;
+};
+
+int knapsack(int n, Item items[], int capacity) {
+    int i, w;
+    
+    for (i = 0; i <= n; i++) {
+        for (w = 0; w <= capacity; w++) {
+            if (i == 0 || w == 0)
+                dp[i][w] = 0;
+            else if (items[i - 1].weight <= w)
+                dp[i][w] = (items[i - 1].value + dp[i - 1][w - items[i - 1].weight] > dp[i - 1][w]) ? 
+                            items[i - 1].value + dp[i - 1][w - items[i - 1].weight] : dp[i - 1][w];
+            else
+                dp[i][w] = dp[i - 1][w];
+        }
+    }
+    
+    return dp[n][capacity];
+}
+
+int main() {
+    int width = 800;
+    int height = 600;
+
+    sf::RenderWindow window(sf::VideoMode(width, height), "Knapsack Problem Visualization");
+
+    // Create items
+    int n = 4; // Number of items
+    Item items[n] = {{10, 60}, {20, 100}, {30, 120}, {15, 50}};
+    int capacity = 50;
+
+    // Solve knapsack problem
+    int max_value = knapsack(n, items, capacity);
+
+    // Main loop
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+
+        window.clear(sf::Color::White);
+
+        // Display max value
+        sf::Font font;
+        font.loadFromFile("arial.ttf");
+        sf::Text text;
+        text.setFont(font);
+        text.setString("Max Value: " + std::to_string(max_value));
+        text.setCharacterSize(24);
+        text.setFillColor(sf::Color::Black);
+        text.setPosition(20, 20);
+        window.draw(text);
+
+        window.display();
+    }
+
+    return 0;
+}
