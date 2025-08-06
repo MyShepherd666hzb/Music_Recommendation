@@ -29,6 +29,7 @@ urlpatterns = [
     path('', include('index.urls')),
     path('play/', include('play.urls')),
     path('ranking/', include('ranking.urls')),
+    path('recommend/', include('recommend.urls')),
     path('search/', include('search.urls')),
     path('user/', include('user.urls')),
     url('^static/(?P<path>.*)$', static.serve, {'document_root': settings.STATIC_ROOT}, name='static')

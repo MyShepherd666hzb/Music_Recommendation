@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的音乐</title>
+    <link type="image/x-icon" rel="shortcut icon" href="/static/favicon.ico">
+    <link type="text/css" rel="stylesheet" href="/static/css/common.css">
+    <link type="text/css" rel="stylesheet" href="/static/css/ranking.css">
+    <style>
+        /* 为按钮设置绿色背景颜色，并使其居中显示 */
+        #randomButton {
+            background-color: green;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 200px;
+            margin: 20px auto;
+            display: block;
+            border-radius: 5px;
+        }
+
+        /* 鼠标悬停时按钮颜色变深 */
+        #randomButton:hover {
+            background-color: darkgreen;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <a href="/" class="logo" title="首页"><img alt="我的音乐" src="/image/logo1.png"></a>
+        <div class="search-box">
+            <form id="searchForm" action="{% url 'search' 1 %}" method="post" target="_blank">
+                <div class="search-keyword">
+                    <input name="kword" type="text" class="keyword" maxlength="120" placeholder="音乐节" />
+                </div>
+                <input id="subSerch" type="submit" class="search-button" value="搜 索" />
+            </form>
+            <div id="suggest" class="search-suggest"></div>
+            <div class="search-hot-words">
+                <a target="play" href="http://127.0.0.1:8000/play/11.html" style="display: inline-block; margin-right: 10px;">好心分手</a>
+                <a target="play" href="http://127.0.0.1:8000/play/6.html" style="display: inline-block; margin-right: 10px;">别再记起</a>
+                <a target="play" href="http://127.0.0.1:8000/play/10.html" style="display: inline-block; margin-right: 10px;">Vola</a>
+                <a target="play" href="http://127.0.0.1:8000/play/13.html" style="display: inline-block;">爱过了又怎样</a>
+            </div>
+        </div>
+    </div><!--end header-->
+
+    <div class="nav-box">
+        <div class="nav-box-inner">
+            <ul class="nav clearfix">
+                <li><a href="/">首页</a></li>
+                <li><a href="{% url 'ranking' %}">歌曲排行</a></li>
+                <li><a href="{% url 'home' 1 %}" target="_blank">用户中心</a></li>
+            </ul>
+        </div>
+    </div><!--end nav-box-->
+
+    <div class="wrapper clearfix">
+        <!-- 左侧列表 -->
+        <div class="side">
+            <div class="side-nav">
+                <div class="nav-head">
+                    <a href="{% url 'ranking' %}">所有歌曲分类</a>
+                </div>
+                <ul id="sideNav" class="cate-item">
+                    <li class="computer">
+                        <div class="main-cate">
+                            <ul id="sideNav" class="cate-item">
+                                <li class="computer">
+                                    <div class="main-cate">
+                                        <a href="http://127.0.0.1:8000/ranking/?type=%E6%B5%81%E8%A1%8C" class="main-title">流行</a>
+                                    </div>
+                                </li>
+                                <li class="computer">
+                                    <div class="main-cate">
+                                        <a href="http://127.0.0.1:8000/ranking/?type=%E4%BC%A4%E6%84%9F" class="main-title">伤感</a>
+                                    </div>
+                                </li>
+                                <li class="computer">
+                                    <div class="main-cate">
+                                        <a href="http://127.0.0.1:8000/ranking/?type=%E6%91%87%E6%BB%9A" class="main-title">摇滚</a>
+                                    </div>
+                                </li>
+                                <li class="computer">
+                                    <div class="main-cate">
+                                        <a href="http://127.0.0.1:8000/ranking/?type=%E5%8A%B1%E5%BF%97" class="main-title">励志</a>
+                                    </div>
+                                </li>
+                                <li class="computer">
+                                    <div class="main-cate">
+                                        <a href="http://127.0.0.1:8000/ranking/?type=%E7%94%9C%E8%9C%9C" class="main-title">甜蜜</a>
+                                    </div>
+                                </li>
+                                <li class="computer">
+                                    <div class="main-cate">
+                                        <a href="http://127.0.0.1:8000/ranking/?type=%E5%9C%BA%E6%99%AF" class="main-title">场景</a>
+                                    </div>
+                                </li>
+                                <li class="computer">
+                                    <div class="main-cate">
+                                        <a href="http://127.0.0.1:8000/ranking/?type=%E5%AE%89%E9%9D%99" class="main-title">安静</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div><!-- 左侧列表 end -->
+
+        <!-- 主内容区 -->
+        <div class="main">
+            <h1>打开摄像头并显示视频流</h1>
+            <!-- 视频流显示区域 -->
+            <video id="video" autoplay muted width="720" height="560"></video>
+
+            <script defer src="face-api.js"></script>
+            <script defer src="script.js"></script>
+
+            <!-- 新增按钮，点击后跳转到一个随机生成的页面 -->
+            <button id="randomButton">
+                歌曲推荐
+            </button>
+
+            <script>
+                // 获取按钮元素
+                const randomButton = document.getElementById('randomButton');
+
+                // 设置点击事件
+                randomButton.addEventListener('click', function() {
+                    // 生成 1 到 13 之间的随机数
+                    const randomNumber = Math.floor(Math.random() * 13) + 1;
+
+                    // 构建跳转的 URL
+                    const url = `http://127.0.0.1:8000/play/${randomNumber}.html`;
+
+                    // 跳转到生成的随机 URL
+                    window.location.href = url;
+                });
+            </script>
+        </div><!--end main-->
+    </div><!--end wrapper-->
+</body>
+</html>

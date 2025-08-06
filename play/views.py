@@ -46,6 +46,8 @@ def playview(request, song_id):
     return render(request, 'play.html', locals())
 
 
+# 歌曲的下载
+
 def downloadview(request, song_id):
     # 根据song_id查找歌曲信息
     song_info = Song.objects.get(song_id=int(song_id))
@@ -75,4 +77,5 @@ def downloadview(request, song_id):
     response['Content-Type'] = 'application/octet-stream'
     response['Content-Disposition'] = 'attachment;filename="%s"' % filename
     return response
+
 

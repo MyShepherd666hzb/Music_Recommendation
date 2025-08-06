@@ -199,3 +199,4 @@ require(['jquery','com'], function ($,com){
     });
   });
 });
+
